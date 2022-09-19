@@ -1,21 +1,38 @@
 import { useSession, signIn, signOut } from "next-auth/react";
-import { useState } from "react";
-export default function Main() {
+import {useEffect, useState} from "react";
+import prisma from "../libs/prisma";
+import {useRouter} from "next/router";
+
+
+export const getServerSideProps = async () => {
+  const posts1 = await prisma.post.findMany()
+  const posts = JSON.stringify(posts1)
+  return { props: { posts } }
+}
+
+export default function Main({posts}) {
   const [img_url, setImg_url] = useState("");
-  const [authorEmail, setAuthorEmail] = useState("");
+  const [postData, setPostData] = useState()
+  const router = useRouter()
   const submitData = async (e) => {
     e.preventDefault();
     try {
+      const authorEmail = session.user.email
       const body = { img_url, authorEmail };
-      await fetch(`/api/post`, {
+      await fetch(`/api/createPost`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      setImg_url("")
+      await router.replace(router.asPath)
     } catch (error) {
       console.error(error);
     }
   };
+  useEffect(()=> {
+    setPostData(JSON.parse(posts))
+  }, [posts])
   const { data: session } = useSession();
   if (session) {
     return (
@@ -32,17 +49,17 @@ export default function Main() {
             value={img_url}
           />
           <input
-            onChange={(e) => setAuthorEmail(e.target.value)}
-            placeholder="Author (email address)"
-            type="text"
-            value={authorEmail}
-          />
-          <input
-            disabled={!img_url || !authorEmail}
             type="submit"
             value="Create"
           />
         </form>
+        <div>
+          <ul>
+            {postData.map((post) => (
+              <li key={post.id}>{post.img_url}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   }

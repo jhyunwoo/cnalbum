@@ -4,7 +4,9 @@ export default async function handle(req, res) {
   const result = await prisma.post.create({
     data: {
       img_url: img_url,
-      author: { connect: { email: authorEmail } },
+      author: {
+        connect: { email: authorEmail },
+      },
     },
   });
   res.json(result);
