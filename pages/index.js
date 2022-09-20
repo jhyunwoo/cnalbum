@@ -1,11 +1,12 @@
 import { useSession, signIn, signOut } from "next-auth/react";
-import {useEffect, useState} from "react";
+
 import prisma from "../libs/prisma";
-import {useRouter} from "next/router";
+
 
 
 export const getServerSideProps = async () => {
   const posts1 = await prisma.post.findMany()
+    console.log(posts1)
   const posts = JSON.stringify(posts1)
   return { props: { posts } }
 }
@@ -25,7 +26,9 @@ export default function Main({posts}) {
                 <img src={`https://imagedelivery.net/p4TahxOLmTmIsMIJ7PpE9A/${post.img_url}/public`}/>
                 <div>{post.title}</div>
                 <div>{post.like}</div>
+
               </div>
+
             ))}
           </div>
         </div>

@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import {useSession} from "next-auth/react";
-// import createPost from "./api/createPost";
 
 export default function Post(){
     const { data: session } = useSession();
@@ -28,7 +27,7 @@ export default function Post(){
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
-            });
+            }).then((e)=>console.log(e))
         }
         console.log(data)
     }

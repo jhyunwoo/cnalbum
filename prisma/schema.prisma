@@ -42,7 +42,7 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String
-  nickname String?
+  nickname      String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
@@ -61,19 +61,10 @@ model VerificationToken {
 
 model Post {
   id        Int      @id @default(autoincrement())
-  img_url   String
-  title String?
-  tag Tag[]
-  like      Int      @default(0)
+  img_url   String? @unique
+  title     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
-}
-
-model Tag{
-id Int @id @default(autoincrement())
-text String
-post   Post @relation(fields: [postId], references: [id])
-  postId Int
 }

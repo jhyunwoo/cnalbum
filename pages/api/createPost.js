@@ -10,5 +10,6 @@ export default async function createPost(req, res) {
       },
     },
   });
+
   res.json(result);
 }
