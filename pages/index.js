@@ -20,6 +20,15 @@ export default function Main({posts}) {
   const { data: session } = useSession();
   const postData = JSON.parse(posts)
     const router = useRouter()
+    async function deletePost(){
+        const postId = post.id
+        await fetch(`/api/deletePost`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({postId}),
+        })
+        await router.replace(router.asPath)
+    }
     if (session) {
     return (
       <div>
