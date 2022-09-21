@@ -1,6 +1,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import prisma from "../libs/prisma";
 import Link from "next/link";
+import {useEffect, useState} from "react";
 
 export const getServerSideProps = async () => {
   const posts1 = await prisma.post.findMany({
@@ -15,7 +16,7 @@ export const getServerSideProps = async () => {
 
 export default function Main({ posts }) {
   const { data: session } = useSession();
-
+  const [countLike, setCountLike] = useState()
   //serverside에서 받은 데이터 json으로 변환
   const postData = JSON.parse(posts);
 
@@ -34,6 +35,14 @@ export default function Main({ posts }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userEmail, postId }),
     });
+  }
+
+  function checkLiked(){
+    // if(arguments.include(session.user.email)){
+    //   return "text-red-300"
+    // } else {
+    //   return ""
+    // }
   }
   if (session) {
     return (
@@ -77,19 +86,19 @@ export default function Main({ posts }) {
         </div>
         {postData.map((data, key) => (
           <div key={key}>
-            <div className="bg-white m-4 w-72 mx-auto rounded-2xl flex flex-col">
+            <div className="bg-white m-4 w-80 mx-auto rounded-xl flex flex-col">
               <div className="h-14 flex">
                 <div className="my-auto mx-6 text-lg">{data.author.name}</div>
               </div>
               <div
-                className="w-72 h-72 bg-gray-200 bg-cover bg-center"
+                className="w-80 h-80 bg-gray-200 bg-cover bg-center"
                 style={{
                   backgroundImage: `url(
                   https://imagedelivery.net/p4TahxOLmTmIsMIJ7PpE9A/${data.img_url}/public
                 )`,
                 }}
               ></div>
-              <div className="h-20">
+              <div className="">
                 <div className="flex my-2 mx-3">
                   <div
                     className="my-auto"
@@ -101,7 +110,7 @@ export default function Main({ posts }) {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="w-7 h-7"
+                      className={`w-7 h-7 ${checkLiked(data)}`}
                     >
                       <path
                         strokeLinecap="round"
@@ -112,7 +121,7 @@ export default function Main({ posts }) {
                   </div>
                   <div className="mx-2 my-auto">{data.like.length} likes</div>
                 </div>
-                <div className=" mx-4">
+                <div className=" mx-4 mb-4">
                   <div>{data.title}</div>
                 </div>
               </div>
