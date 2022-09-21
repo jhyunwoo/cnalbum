@@ -55,23 +55,24 @@ model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
   @@unique([identifier, token])
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
-  img_url   String? @unique
+  img_url   String?  @unique
   title     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
-  like Like[]
+  like      Like[]
 }
 
 model Like {
-    id Int @id @default(autoincrement())
-    likedPerson String
-    likedpost Post @relation(fields: [likedpostId], references: [id])
-    likedpostId Int
+  id          Int    @id @default(autoincrement())
+  likedPerson String
+  likedpost   Post   @relation(fields: [likedpostId], references: [id])
+  likedpostId Int
 }
