@@ -32,7 +32,7 @@ export default function Post(){
         console.log(data)
     }
 
-    return (
+        return (
         <div>
             <div>Post page</div>
             <form onSubmit={handleSubmit(transferPost)}>
@@ -42,13 +42,6 @@ export default function Post(){
                 <input {...register("title")} type={"text"} placeholder={"title"}/>
                 <button type={"submit"}>Submit</button>
             </form>
-
-
-            {/*<ul>*/}
-            {/*    {tags.map((data, key) => (*/}
-            {/*        <li key={key}>{data}</li>*/}
-            {/*    ))}*/}
-            {/*</ul>*/}
         </div>
     )
 }

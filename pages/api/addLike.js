@@ -2,38 +2,45 @@ import prisma from "../../libs/prisma";
 
 export default async function addLike(req, res) {
     const { userEmail, postId  } = req.body;
-    const json = [
-        { name: 'Bob the dog' },
-        { name: 'Claudine the cat' },
-    ]
-    // const update = await prisma.post.update({
-    //     where: {
-    //         id: postId,
-    //     },
-    //     data: {
-    //         like: {
-    //             create: {
-    //                 userEmail: userEmail,
-    //             }
-    //         },
-    //     },
-    // })
-    const update = await prisma.user.update({
+    const liked = await prisma.post.findUnique({
         where: {
-            userEmail: userEmail,
+            id: postId
         },
-        data: {
-            posts: {
-                update: {
-                    where: {
-                        id: postId,
-                    },
-                    data: {
-                        like: json,
-                    },
+        include:{
+            like: true
+        }
+    })
+    let likedPersonArray = []
+    let step
+    for(step=0; step<liked.like.length; step++){
+        likedPersonArray.push(liked.like[step].likedPerson)
+    }
+     if (likedPersonArray.includes(userEmail)){
+        const update = await prisma.post.update({
+            where: {
+                id: postId,
+            },
+            data: {
+                like: {
+                    deleteMany: [{ likedPerson: userEmail }],
                 },
             },
-        },
-    })
-    console.log(update)
+        })
+        res.json(update)
+    } else {
+        const update = await prisma.post.update({
+            where: {
+                id: postId,
+            },
+            data: {
+                like: {
+                    create: {
+                        likedPerson: userEmail
+                    }
+                }
+            }
+        })
+        res.json(update)
+    }
+
 }
