@@ -31,7 +31,7 @@ export default function Main({ posts }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ postId, userEmail }),
     });
-    //await router.replace("/");
+    await router.replace("/");
     setDeleting(-1);
   }
 
