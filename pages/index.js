@@ -40,29 +40,36 @@ export default function Main({ posts }) {
     await router.push("/");
   }
 
-  function checkLiked() {
-    let step1
-    let step2
-    let array = []
-    let finalArray = []
-    for(step1=0; step1 < postData.length; step1++ ){
-      for(step2=0; step2 < postData[step1].like.length; step2++){
-        console.log(postData[step1].like[step2].likedPerson)
-        array.push(postData[step1].like[step2].likedPerson)
+  async function checkLiked() {
+    let step1;
+    let step2;
+
+    let finalArray = [];
+    for (step1 = 0; step1 < postData.length; step1++) {
+      let array = [];
+      for (step2 = 0; step2 < postData[step1].like.length; step2++) {
+        console.log(postData[step1].like[step2].likedPerson);
+        array.push(postData[step1].like[step2].likedPerson);
       }
-      finalArray.push(array)
-      let array = []
+      finalArray.push(array);
     }
 
-    setCountLike(finalArray)
-    console.log(countLike)
+    setCountLike((countLike) => finalArray);
+    console.log(countLike);
   }
+  useEffect(() => checkLiked, []);
+
   if (session) {
     return (
       <div className="bg-slate-50 w-screen">
         <div className="p-2 fixed top-0 left-0 w-full bg-slate-50 rounded-br-lg rounded-bl-lg">
           <div className={"flex justify-between w-full"}>
-            <div className="text-4xl font-bold my-auto" onClick={()=>checkLiked()}>CNAlbum</div>
+            <div
+              className="text-4xl font-bold my-auto"
+              onClick={() => checkLiked()}
+            >
+              CNAlbum
+            </div>
             <div className="flex">
               <div className="my-auto ">
                 <div
@@ -105,7 +112,8 @@ export default function Main({ posts }) {
             <div className="bg-white m-4 w-80 mx-auto rounded-xl flex flex-col">
               <div className="h-14 flex justify-between">
                 <div className="my-auto mx-6 text-lg">{data.author.name}</div>
-                {session.user.email === data.author.email || session.user.email === "jhyunwoo0228@gmail.com" ? (
+
+                {session.user.email === data.author.email ? (
                   <button
                     className={
                       "my-auto mr-4 bg-blue-400 text-white p-1 rounded-lg hover:bg-blue-500"
@@ -150,7 +158,7 @@ export default function Main({ posts }) {
                   <div className="mx-2 my-auto">{data.like.length} likes</div>
                 </div>
                 <div className=" mx-4 mb-4">
-                  <div class="break-words">{data.title}</div>
+                  <div className="break-words">{data.title}</div>
                 </div>
               </div>
             </div>

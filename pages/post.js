@@ -82,32 +82,35 @@ export default function Post() {
             placeholder={"제목"}
             className="bg-blue-50 ring-2 ring-blue-400 p-2 m-2 rounded-lg mx-10 placeholder-blue-300"
           />
-          <button
-            type={"submit"}
-            className="bg-blue-400 text-white p-2 m-2 rounded-xl mx-10"
-          >
-            {loading ? (
+
+          {!loading ? (
+            <button
+              type={"submit"}
+              className="bg-blue-400 text-white p-2 m-2 rounded-xl mx-10"
+            >
               <div className="flex mx-auto justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6 animate-spin mx-1"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-                  />
-                </svg>
-                <div className="mx-1">Loading...</div>
+                <div className="mx-1">Post</div>
               </div>
-            ) : (
-              <div>Post</div>
-            )}
-          </button>
+            </button>
+          ) : (
+            <div className="flex  justify-center bg-blue-400 text-white p-2 m-2 rounded-xl mx-10">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 animate-spin mx-1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+              </svg>
+              <div className="mx-1">Loading...</div>
+            </div>
+          )}
         </form>
       </div>
     </div>
