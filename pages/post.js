@@ -51,7 +51,7 @@ export default function Post() {
           <button
             className={"bg-blue-400 p-1 m-2 my-auto rounded-lg text-white px-2"}
           >
-            Main
+            취소
           </button>
         </Link>
       </div>
@@ -77,11 +77,21 @@ export default function Post() {
             </span>
           )}
           <input
-            {...register("title")}
+            {...register("title", {
+              maxLength: {
+                value: 80,
+                message: "제목의 최대 글자수는 80입니다.",
+              },
+            })}
             type={"text"}
             placeholder={"제목"}
             className="bg-blue-50 ring-2 ring-blue-400 p-2 m-2 rounded-lg mx-10 placeholder-blue-300"
           />
+          {errors.title && (
+            <span className=" text-white bg-red-500 p-1 rounded-lg my-2 px-2 mx-auto">
+              {errors.title.message}
+            </span>
+          )}
 
           {!loading ? (
             <button
@@ -89,7 +99,7 @@ export default function Post() {
               className="bg-blue-400 text-white p-2 m-2 rounded-xl mx-10"
             >
               <div className="flex mx-auto justify-center">
-                <div className="mx-1">Post</div>
+                <div className="mx-1">사진 업로드</div>
               </div>
             </button>
           ) : (
@@ -108,7 +118,7 @@ export default function Post() {
                   d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
                 />
               </svg>
-              <div className="mx-1">Loading...</div>
+              <div className="mx-1">업로드 중...</div>
             </div>
           )}
         </form>

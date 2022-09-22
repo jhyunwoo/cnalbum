@@ -17,4 +17,7 @@ export default async function deletePost(req, res) {
       id: postId,
     },
   });
+  res.json({
+    ok: true,
+  });
 }

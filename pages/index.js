@@ -17,47 +17,46 @@ export const getServerSideProps = async () => {
 
 export default function Main({ posts }) {
   const { data: session } = useSession();
-  const [countLike, setCountLike] = useState([]);
   const router = useRouter();
   //serverside에서 받은 데이터 json으로 변환
   const postData = JSON.parse(posts).reverse();
 
+  const [deleting, setDeleting] = useState(-1);
+
   // Post 삭제 function
   async function deletePost(postId, userEmail) {
+    setDeleting(postId);
     await fetch(`/api/deletePost`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ postId, userEmail }),
     });
+    //await router.replace("/");
+    setDeleting(-1);
   }
 
-  async function addLike(userEmail, postId) {
+  async function addLike(userEmail, postId, key) {
     await fetch(`/api/addLike`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userEmail, postId }),
     });
-    await router.push("/");
+    postData[key].like.push({ likedPerson: userEmail });
   }
 
-  async function checkLiked() {
-    let step1;
-    let step2;
-
-    let finalArray = [];
-    for (step1 = 0; step1 < postData.length; step1++) {
-      let array = [];
-      for (step2 = 0; step2 < postData[step1].like.length; step2++) {
-        console.log(postData[step1].like[step2].likedPerson);
-        array.push(postData[step1].like[step2].likedPerson);
-      }
-      finalArray.push(array);
+  function checkLiked(key) {
+    let step;
+    let likedArray = [];
+    // 우리가 데이터 베이스에서 가져온 postData에서 like 한 사람을 찾기 위해 각 게시물의 번호를 가져오고 그 다음에 각 게시물의 postdata에 있는 좋아요 한사람의 이메일을 가져와서 likedArray에 저장, 그 다름에 그 array에 현재 로그된 사용자가 있으면 true를 리턴하고 아니면 false를 리턴
+    for (step = 0; step < postData[key].like.length; step++) {
+      likedArray.push(postData[key].like[step].likedPerson);
     }
-
-    setCountLike((countLike) => finalArray);
-    console.log(countLike);
+    if (likedArray.includes(session.user.email)) {
+      return true;
+    } else {
+      return false;
+    }
   }
-  useEffect(() => checkLiked, []);
 
   if (session) {
     return (
@@ -66,7 +65,7 @@ export default function Main({ posts }) {
           <div className={"flex justify-between w-full"}>
             <div
               className="text-4xl font-bold my-auto"
-              onClick={() => checkLiked()}
+              onClick={() => console.log(postData[0].like)}
             >
               CNAlbum
             </div>
@@ -111,17 +110,28 @@ export default function Main({ posts }) {
           <div key={key}>
             <div className="bg-white m-4 w-80 mx-auto rounded-xl flex flex-col">
               <div className="h-14 flex justify-between">
-                <div className="my-auto mx-6 text-lg">{data.author.name}</div>
+                <div
+                  className="my-auto mx-6 text-lg"
+                  onClick={() => checkLiked(key)}
+                >
+                  {data.author.name}
+                </div>
 
                 {session.user.email === data.author.email ? (
-                  <button
-                    className={
-                      "my-auto mr-4 bg-blue-400 text-white p-1 rounded-lg hover:bg-blue-500"
-                    }
-                    onClick={() => deletePost(data.id, session.user.email)}
-                  >
-                    delete
-                  </button>
+                  !(deleting === data.id) ? (
+                    <button
+                      className={
+                        "my-auto mr-4 bg-blue-400 text-white p-1 rounded-lg hover:bg-blue-500"
+                      }
+                      onClick={() => deletePost(data.id, session.user.email)}
+                    >
+                      삭제
+                    </button>
+                  ) : (
+                    <div className="my-auto mr-4 bg-blue-400 text-white p-1 rounded-lg hover:bg-blue-500">
+                      <div className="mx-1 text-base">삭제 중...</div>
+                    </div>
+                  )
                 ) : (
                   ""
                 )}
@@ -138,24 +148,39 @@ export default function Main({ posts }) {
                 <div className="flex my-2 mx-3">
                   <div
                     className="my-auto"
-                    onClick={() => addLike(session.user.email, data.id)}
+                    onClick={() => addLike(session.user.email, data.id, key)}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className={`w-7 h-7`}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-                      />
-                    </svg>
+                    {checkLiked(key) ? (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="w-7 h-7 text-red-500"
+                        >
+                          <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className={`w-7 h-7 `}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+                          />
+                        </svg>
+                      </>
+                    )}
                   </div>
-                  <div className="mx-2 my-auto">{data.like.length} likes</div>
+                  <div className="mx-2 my-auto">{data.like.length} Like(s)</div>
                 </div>
                 <div className=" mx-4 mb-4">
                   <div className="break-words">{data.title}</div>
