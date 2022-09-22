@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function Post() {
   const { data: session } = useSession();
@@ -33,23 +34,32 @@ export default function Post() {
         body: JSON.stringify(body),
       }).then((e) => console.log(e));
     }
-    router.push("/");
+    await router.push("/");
   }
 
   return (
-    <div>
-      <div>Post page</div>
-      <form onSubmit={handleSubmit(transferPost)}>
-        <input
-          {...register("image", {
-            required: "이미지를 업로드하세요.",
-          })}
-          type={"file"}
-          accept="image/*"
-        />
-        <input {...register("title")} type={"text"} placeholder={"title"} />
-        <button type={"submit"}>Submit</button>
-      </form>
-    </div>
+      <div className={"h-screen w-screen bg-orange-100"}>
+        <div className={"bg-orange-200 flex justify-between h-12"}>
+          <div className={"text-2xl m-2 my-auto font-semibold"}>CNAlbum Post Page</div>
+          <Link href={"/"}>
+            <button className={"bg-blue-400 p-1 m-2 my-auto rounded-lg text-white px-2"}>Main</button>
+          </Link>
+        </div>
+        <div></div>
+      </div>
+    // <div>
+    //   <div>Post page</div>
+    //   <form onSubmit={handleSubmit(transferPost)}>
+    //     <input
+    //       {...register("image", {
+    //         required: "이미지를 업로드하세요.",
+    //       })}
+    //       type={"file"}
+    //       accept="image/*"
+    //     />
+    //     <input {...register("title")} type={"text"} placeholder={"title"} />
+    //     <button type={"submit"}>Submit</button>
+    //   </form>
+    // </div>
   );
 }
