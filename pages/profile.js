@@ -99,7 +99,7 @@ export default function Main({ posts }) {
         {postData.map((data, key) =>
           session.user.email === data.author.email ? (
             <div key={key}>
-              <div className="bg-white my-4 w-80 mx-auto rounded-xl flex flex-col shadow-lg transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300">
+              <div className="bg-white my-4 w-80 mx-auto rounded-xl flex flex-col shadow-lg ">
                 <div className="h-14 flex justify-between">
                   <div
                     className="my-auto mx-6 text-lg"
