@@ -3,6 +3,7 @@ import prisma from "../libs/prisma";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export const getServerSideProps = async () => {
   const posts1 = await prisma.post.findMany({
@@ -20,6 +21,7 @@ export default function Main({ posts }) {
   const router = useRouter();
   //serverside에서 받은 데이터 json으로 변환
   const postData = JSON.parse(posts).reverse();
+  const [like, setLike] = useState([]);
 
   const [deleting, setDeleting] = useState(-1);
 
@@ -51,6 +53,7 @@ export default function Main({ posts }) {
     for (step = 0; step < postData[key].like.length; step++) {
       likedArray.push(postData[key].like[step].likedPerson);
     }
+
     if (likedArray.includes(session.user.email)) {
       return true;
     } else {
@@ -60,15 +63,18 @@ export default function Main({ posts }) {
 
   if (session) {
     return (
-      <div className="bg-slate-50 w-screen">
+      <div className="bg-slate-50 w-full">
+        <Head>
+          <title>CNAlbum</title>
+        </Head>
         <div className="p-2 fixed top-0 left-0 w-full bg-slate-50 rounded-br-lg rounded-bl-lg">
           <div className={"flex justify-between w-full"}>
-            <div
-              className="text-4xl font-bold my-auto"
-              onClick={() => console.log(postData[0].like)}
-            >
-              CNAlbum
-            </div>
+            <Link href="/">
+              <img
+                className="object-contain h-10 w-40 my-auto"
+                src="CNAlbum_logo.png"
+              />
+            </Link>
             <div className="flex">
               <div className="my-auto ">
                 <div
@@ -84,31 +90,13 @@ export default function Main({ posts }) {
                   {session ? "로그아웃" : "로그인"}
                 </div>
               </div>
-              <Link href={"/post"}>
-                <div className="my-auto bg-blue-500 hover:bg-blue-600 p-1 rounded-lg">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6 text-white"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                    />
-                  </svg>
-                </div>
-              </Link>
             </div>
           </div>
         </div>
         <div className={"h-20"}></div>
         {postData.map((data, key) => (
           <div key={key}>
-            <div className="bg-white m-4 w-80 mx-auto rounded-xl flex flex-col">
+            <div className="bg-white my-4 w-80 mx-auto rounded-xl flex flex-col shadow-lg transition ease-in-out hover:-translate-y-1 hover:scale-105 duration-300">
               <div className="h-14 flex justify-between">
                 <div
                   className="my-auto mx-6 text-lg"
@@ -117,7 +105,8 @@ export default function Main({ posts }) {
                   {data.author.name}
                 </div>
 
-                {session.user.email === data.author.email ? (
+                {session.user.email === data.author.email ||
+                session.user.isAdmin ? (
                   !(deleting === data.id) ? (
                     <button
                       className={
@@ -145,12 +134,20 @@ export default function Main({ posts }) {
                 }}
               ></div>
               <div className="">
-                <div className="flex my-2 mx-3">
+                <div className="flex my-2 mx-3 transition">
                   <div
                     className="my-auto"
-                    onClick={() => addLike(session.user.email, data.id, key)}
+                    onClick={() => {
+                      addLike(session.user.email, data.id, key);
+
+                      if (like.includes(key)) {
+                        setLike(like.filter((like) => like !== key));
+                      } else {
+                        setLike((like) => [...like, key]);
+                      }
+                    }}
                   >
-                    {checkLiked(key) ? (
+                    {checkLiked(key) || like.includes(key) ? (
                       <>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +177,18 @@ export default function Main({ posts }) {
                       </>
                     )}
                   </div>
-                  <div className="mx-2 my-auto">{data.like.length} Like(s)</div>
+                  <div className="mx-2 my-auto">
+                    {like.includes(key)
+                      ? data.like.length + 1
+                      : data.like.length}{" "}
+                    {like.includes(key)
+                      ? data.like.length <= 0
+                        ? "like"
+                        : "likes"
+                      : data.like.length <= 1
+                      ? "like"
+                      : "likes"}
+                  </div>
                 </div>
                 <div className=" mx-4 mb-4">
                   <div className="break-words">{data.title}</div>
@@ -189,14 +197,18 @@ export default function Main({ posts }) {
             </div>
           </div>
         ))}
-        <div className="w-full h-10"></div>
+        <div className="w-full h-14"></div>
       </div>
     );
   }
   return (
     <div className="w-screen h-screen flex">
       <div className="mx-auto my-auto flex flex-col">
-        <div className="text-6xl font-semibold">CNAlbum</div>
+        {/* <div className="text-6xl font-semibold">CNAlbum</div> */}
+        <img
+          className="object-contain h-10 w-40 my-auto"
+          src="CNAlbum_logo.png"
+        />
         <div
           className="mx-auto my-4 bg-blue-500 text-white p-2 px-4 rounded-xl hover:bg-blue-600 transition"
           onClick={() => signIn()}
