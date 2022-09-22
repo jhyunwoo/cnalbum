@@ -17,7 +17,7 @@ export const getServerSideProps = async () => {
 
 export default function Main({ posts }) {
   const { data: session } = useSession();
-  const [countLike, setCountLike] = useState();
+  const [countLike, setCountLike] = useState([]);
   const router = useRouter();
   //serverside에서 받은 데이터 json으로 변환
   const postData = JSON.parse(posts).reverse();
@@ -41,18 +41,28 @@ export default function Main({ posts }) {
   }
 
   function checkLiked() {
-    // if(arguments.include(session.user.email)){
-    //   return "text-red-300"
-    // } else {
-    //   return ""
-    // }
+    let step1
+    let step2
+    let array = []
+    let finalArray = []
+    for(step1=0; step1 < postData.length; step1++ ){
+      for(step2=0; step2 < postData[step1].like.length; step2++){
+        console.log(postData[step1].like[step2].likedPerson)
+        array.push(postData[step1].like[step2].likedPerson)
+      }
+      finalArray.push(array)
+      let array = []
+    }
+
+    setCountLike(finalArray)
+    console.log(countLike)
   }
   if (session) {
     return (
-      <div className="bg-slate-100 w-screen">
-        <div className="p-2 fixed top-0 left-0 w-full backdrop-blur">
-          <div className={"flex justify-between  w-full"}>
-            <div className="text-4xl font-bold my-auto">CNAlbum</div>
+      <div className="bg-slate-50 w-screen">
+        <div className="p-2 fixed top-0 left-0 w-full bg-slate-50 rounded-br-lg rounded-bl-lg">
+          <div className={"flex justify-between w-full"}>
+            <div className="text-4xl font-bold my-auto" onClick={()=>checkLiked()}>CNAlbum</div>
             <div className="flex">
               <div className="my-auto ">
                 <div
@@ -95,7 +105,7 @@ export default function Main({ posts }) {
             <div className="bg-white m-4 w-80 mx-auto rounded-xl flex flex-col">
               <div className="h-14 flex justify-between">
                 <div className="my-auto mx-6 text-lg">{data.author.name}</div>
-                {session.user.email === data.author.email ? (
+                {session.user.email === data.author.email || session.user.email === "jhyunwoo0228@gmail.com" ? (
                   <button
                     className={
                       "my-auto mr-4 bg-blue-400 text-white p-1 rounded-lg hover:bg-blue-500"
@@ -128,7 +138,7 @@ export default function Main({ posts }) {
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className={`w-7 h-7 ${checkLiked(data)}`}
+                      className={`w-7 h-7`}
                     >
                       <path
                         strokeLinecap="round"
