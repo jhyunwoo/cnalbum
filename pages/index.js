@@ -54,11 +54,7 @@ export default function Main({ posts }) {
       likedArray.push(postData[key].like[step].likedPerson);
     }
 
-    if (likedArray.includes(session.user.email)) {
-      return true;
-    } else {
-      return false;
-    }
+    return likedArray.includes(session.user.email);
   }
 
   if (session) {
