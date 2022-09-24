@@ -90,6 +90,10 @@ export default function Main({ posts }) {
           </div>
         </div>
         <div className={"h-20"}></div>
+        <div className="m-2 p-2 text-white bg-indigo-500 flex flex-col">
+          <div>체육대축전 당일 받지 못한 사진은 아래 오픈 채팅방으로 들어와서 인화 요청한 사진과 매수, 신청자 이름을 알려주시면 장부 확인 후 인화해 다음주 월요일에 드리겠습니다.</div>
+          <a href="https://open.kakao.com/o/sIDaqvDe">카카오톡 오픈 채팅방으로 이동</a>
+        </div>
         {postData.map((data, key) => (
           <div key={key}>
             <div className="bg-white my-4 w-80 mx-auto rounded-xl flex flex-col shadow-lg">
