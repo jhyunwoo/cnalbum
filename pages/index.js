@@ -92,7 +92,7 @@ export default function Main({ posts }) {
         <div className={"h-20"}></div>
         <div className="m-2 p-2 text-white bg-indigo-500 flex flex-col rounded-xl shadow-xl">
           <div>체육대축전 당일 받지 못한 사진은 아래 오픈 채팅방으로 들어와서 인화 요청한 사진과 매수, 신청자 이름을 알려주시면 장부 확인 후 인화해 다음주 월요일에 드리겠습니다.</div>
-          <a href="https://open.kakao.com/o/sIDaqvDe" className="bg-white text-indigo-700 rounded-xl m-2 p-2">카카오톡 오픈 채팅방으로 이동</a>
+          <a href="https://open.kakao.com/o/sIDaqvDe" className="bg-white text-indigo-700 rounded-xl m-2 p-2 hover:bg-indigo-700 hover:text-white transition">카카오톡 오픈 채팅방으로 이동</a>
         </div>
         {postData.map((data, key) => (
           <div key={key}>
